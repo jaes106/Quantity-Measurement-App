@@ -39,6 +39,19 @@ public class QuantityMeasurementApp {
             return new Length(converted, targetUnit);
         }
 
+        public Length add(Length other) {
+            if (other == null)
+                throw new IllegalArgumentException("Length to add cannot be null");
+
+            double sumBase =
+                    this.toBaseUnit() + other.toBaseUnit();
+
+            double result =
+                    sumBase / this.unit.getFactor();
+
+            return new Length(result, this.unit);
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -81,24 +94,13 @@ public class QuantityMeasurementApp {
         return baseValue / target.getFactor();
     }
 
-    public static boolean demonstrateLengthEquality(Length l1, Length l2) {
-        return l1.equals(l2);
-    }
-
-    public static Length demonstrateLengthConversion(double value,
-                                                     LengthUnit from,
-                                                     LengthUnit to) {
-        double converted = convert(value, from, to);
-        return new Length(converted, to);
-    }
-
-    public static Length demonstrateLengthConversion(Length length,
-                                                     LengthUnit toUnit) {
-        return length.convertTo(toUnit);
+    public static Length demonstrateLengthAddition(Length l1, Length l2) {
+        return l1.add(l2);
     }
 
     public static void main(String[] args) {
-        System.out.println(convert(1.0, LengthUnit.FEET, LengthUnit.INCHES));
-        System.out.println(convert(3.0, LengthUnit.YARDS, LengthUnit.FEET));
+        Length a = new Length(1.0, LengthUnit.FEET);
+        Length b = new Length(12.0, LengthUnit.INCHES);
+        System.out.println(a.add(b));
     }
 }
