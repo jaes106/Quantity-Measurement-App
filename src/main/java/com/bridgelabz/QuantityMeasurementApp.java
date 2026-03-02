@@ -2,15 +2,24 @@ package com.bridgelabz;
 
 public class QuantityMeasurementApp {
 
-    // UC2 - Feet Class
-    public static class Feet {
-        private final double value;
+    public static class Length {
 
-        public Feet(double value) {
+        private final double value;
+        private final LengthUnit unit;
+
+        public Length(double value, LengthUnit unit) {
             if (Double.isNaN(value)) {
                 throw new IllegalArgumentException("Invalid numeric value");
             }
+            if (unit == null) {
+                throw new IllegalArgumentException("Unit cannot be null");
+            }
             this.value = value;
+            this.unit = unit;
+        }
+
+        private double toBaseUnit() {
+            return this.value * this.unit.getConversionFactor();
         }
 
         @Override
@@ -19,30 +28,23 @@ public class QuantityMeasurementApp {
             if (obj == null) return false;
             if (this.getClass() != obj.getClass()) return false;
 
-            Feet other = (Feet) obj;
-            return Double.compare(this.value, other.value) == 0;
+            Length other = (Length) obj;
+            return Double.compare(this.toBaseUnit(), other.toBaseUnit()) == 0;
         }
     }
 
-    // UC2 - Inch Class
-    public static class Inch {
-        private final double value;
+    public enum LengthUnit {
+        FEET(12.0),      // base = inches
+        INCHES(1.0);
 
-        public Inch(double value) {
-            if (Double.isNaN(value)) {
-                throw new IllegalArgumentException("Invalid numeric value");
-            }
-            this.value = value;
+        private final double conversionFactor;
+
+        LengthUnit(double conversionFactor) {
+            this.conversionFactor = conversionFactor;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (this.getClass() != obj.getClass()) return false;
-
-            Inch other = (Inch) obj;
-            return Double.compare(this.value, other.value) == 0;
+        public double getConversionFactor() {
+            return conversionFactor;
         }
     }
 }
