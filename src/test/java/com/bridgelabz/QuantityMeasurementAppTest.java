@@ -126,4 +126,49 @@ public class QuantityMeasurementAppTest {
                 .convertTo(LengthUnit.FEET);
         assertEquals(original.getValue(), converted.getValue(), EPSILON);
     }
+
+    @Test
+    void testWeight_KgToGramEquality() {
+        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        var gram = new QuantityWeight(1000.0, WeightUnit.GRAM);
+        assertTrue(kg.equals(gram));
+    }
+
+    @Test
+    void testWeight_KgToPoundEquality() {
+        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        var pound = new QuantityWeight(2.20462, WeightUnit.POUND);
+        assertTrue(kg.equals(pound));
+    }
+
+    @Test
+    void testWeight_Conversion() {
+        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        var grams = kg.convertTo(WeightUnit.GRAM);
+        assertEquals(1000.0, grams.getValue(), 1e-6);
+    }
+
+    @Test
+    void testWeight_Addition_DefaultUnit() {
+        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        var gram = new QuantityWeight(1000.0, WeightUnit.GRAM);
+        var result = kg.add(gram);
+        assertEquals(2.0, result.getValue(), 1e-6);
+    }
+
+    @Test
+    void testWeight_Addition_ExplicitUnit() {
+        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        var gram = new QuantityWeight(1000.0, WeightUnit.GRAM);
+        var result = kg.add(gram, WeightUnit.GRAM);
+        assertEquals(2000.0, result.getValue(), 1e-6);
+    }
+
+    @Test
+    void testWeight_LengthIncompatibility() {
+        var weight = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        var length = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
+        assertFalse(weight.equals(length));
+    }
+
 }
