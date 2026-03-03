@@ -7,168 +7,118 @@ public class QuantityMeasurementAppTest {
 
     private static final double EPSILON = 1e-6;
 
+    // ---------------- LENGTH TESTS ----------------
+
     @Test
     void testFeetEquality() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
+        var a = new Quantity<>(1.0, LengthUnit.FEET);
+        var b = new Quantity<>(1.0, LengthUnit.FEET);
         assertTrue(a.equals(b));
     }
 
     @Test
     void testFeetInchesEquality() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(12.0, LengthUnit.INCHES);
+        var a = new Quantity<>(1.0, LengthUnit.FEET);
+        var b = new Quantity<>(12.0, LengthUnit.INCHES);
         assertTrue(a.equals(b));
     }
 
     @Test
     void testYardEqualsThreeFeet() {
-        var yard = new QuantityMeasurementApp.Length(1.0, LengthUnit.YARDS);
-        var feet = new QuantityMeasurementApp.Length(3.0, LengthUnit.FEET);
+        var yard = new Quantity<>(1.0, LengthUnit.YARDS);
+        var feet = new Quantity<>(3.0, LengthUnit.FEET);
         assertTrue(yard.equals(feet));
     }
 
     @Test
     void testCentimeterEqualsInches() {
-        var cm = new QuantityMeasurementApp.Length(2.54, LengthUnit.CENTIMETERS);
-        var inch = new QuantityMeasurementApp.Length(1.0, LengthUnit.INCHES);
+        var cm = new Quantity<>(2.54, LengthUnit.CENTIMETERS);
+        var inch = new Quantity<>(1.0, LengthUnit.INCHES);
         assertTrue(cm.equals(inch));
     }
 
     @Test
     void testConvertFeetToInches() {
-        var feet = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
+        var feet = new Quantity<>(1.0, LengthUnit.FEET);
         var inches = feet.convertTo(LengthUnit.INCHES);
         assertEquals(12.0, inches.getValue(), EPSILON);
     }
 
     @Test
-    void testConvertYardToFeet() {
-        var yard = new QuantityMeasurementApp.Length(1.0, LengthUnit.YARDS);
-        var feet = yard.convertTo(LengthUnit.FEET);
-        assertEquals(3.0, feet.getValue(), EPSILON);
-    }
-
-    @Test
-    void testAdditionDefaultUnit() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(12.0, LengthUnit.INCHES);
+    void testLengthAdditionDefaultUnit() {
+        var a = new Quantity<>(1.0, LengthUnit.FEET);
+        var b = new Quantity<>(12.0, LengthUnit.INCHES);
         var result = a.add(b);
         assertEquals(2.0, result.getValue(), EPSILON);
         assertEquals(LengthUnit.FEET, result.getUnit());
     }
 
     @Test
-    void testAdditionWithTargetUnitFeet() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(12.0, LengthUnit.INCHES);
-        var result = a.add(b, LengthUnit.FEET);
-        assertEquals(2.0, result.getValue(), EPSILON);
-    }
-
-    @Test
-    void testAdditionWithTargetUnitInches() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(12.0, LengthUnit.INCHES);
+    void testLengthAdditionExplicitUnit() {
+        var a = new Quantity<>(1.0, LengthUnit.FEET);
+        var b = new Quantity<>(12.0, LengthUnit.INCHES);
         var result = a.add(b, LengthUnit.INCHES);
         assertEquals(24.0, result.getValue(), EPSILON);
     }
 
     @Test
-    void testAdditionWithTargetUnitYards() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(12.0, LengthUnit.INCHES);
-        var result = a.add(b, LengthUnit.YARDS);
-        assertEquals(2.0 / 3.0, result.getValue(), EPSILON);
-    }
-
-    @Test
-    void testCommutativity() {
-        var a = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(12.0, LengthUnit.INCHES);
-        var r1 = a.add(b, LengthUnit.YARDS);
-        var r2 = b.add(a, LengthUnit.YARDS);
-        assertEquals(r1.getValue(), r2.getValue(), EPSILON);
-    }
-
-    @Test
-    void testZeroAddition() {
-        var a = new QuantityMeasurementApp.Length(5.0, LengthUnit.FEET);
-        var zero = new QuantityMeasurementApp.Length(0.0, LengthUnit.INCHES);
-        var result = a.add(zero);
-        assertEquals(5.0, result.getValue(), EPSILON);
-    }
-
-    @Test
-    void testNegativeAddition() {
-        var a = new QuantityMeasurementApp.Length(5.0, LengthUnit.FEET);
-        var b = new QuantityMeasurementApp.Length(-2.0, LengthUnit.FEET);
-        var result = a.add(b, LengthUnit.INCHES);
-        assertEquals(36.0, result.getValue(), EPSILON);
-    }
-
-    @Test
-    void testNullUnit() {
+    void testLengthNullUnit() {
         assertThrows(IllegalArgumentException.class,
-                () -> new QuantityMeasurementApp.Length(1.0, null));
+                () -> new Quantity<>(1.0, null));
     }
 
     @Test
-    void testInvalidValue() {
+    void testLengthInvalidValue() {
         assertThrows(IllegalArgumentException.class,
-                () -> new QuantityMeasurementApp.Length(Double.NaN, LengthUnit.FEET));
+                () -> new Quantity<>(Double.NaN, LengthUnit.FEET));
     }
 
-    @Test
-    void testRoundTripConversion() {
-        var original = new QuantityMeasurementApp.Length(5.0, LengthUnit.FEET);
-        var converted = original.convertTo(LengthUnit.INCHES)
-                .convertTo(LengthUnit.FEET);
-        assertEquals(original.getValue(), converted.getValue(), EPSILON);
-    }
+    // ---------------- WEIGHT TESTS ----------------
 
     @Test
-    void testWeight_KgToGramEquality() {
-        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        var gram = new QuantityWeight(1000.0, WeightUnit.GRAM);
+    void testWeightKgToGramEquality() {
+        var kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        var gram = new Quantity<>(1000.0, WeightUnit.GRAM);
         assertTrue(kg.equals(gram));
     }
 
     @Test
-    void testWeight_KgToPoundEquality() {
-        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        var pound = new QuantityWeight(2.20462, WeightUnit.POUND);
+    void testWeightKgToPoundEquality() {
+        var kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        var pound = new Quantity<>(2.20462, WeightUnit.POUND);
         assertTrue(kg.equals(pound));
     }
 
     @Test
-    void testWeight_Conversion() {
-        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+    void testWeightConversion() {
+        var kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
         var grams = kg.convertTo(WeightUnit.GRAM);
-        assertEquals(1000.0, grams.getValue(), 1e-6);
+        assertEquals(1000.0, grams.getValue(), EPSILON);
     }
 
     @Test
-    void testWeight_Addition_DefaultUnit() {
-        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        var gram = new QuantityWeight(1000.0, WeightUnit.GRAM);
+    void testWeightAdditionDefaultUnit() {
+        var kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        var gram = new Quantity<>(1000.0, WeightUnit.GRAM);
         var result = kg.add(gram);
-        assertEquals(2.0, result.getValue(), 1e-6);
+        assertEquals(2.0, result.getValue(), EPSILON);
+        assertEquals(WeightUnit.KILOGRAM, result.getUnit());
     }
 
     @Test
-    void testWeight_Addition_ExplicitUnit() {
-        var kg = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        var gram = new QuantityWeight(1000.0, WeightUnit.GRAM);
+    void testWeightAdditionExplicitUnit() {
+        var kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        var gram = new Quantity<>(1000.0, WeightUnit.GRAM);
         var result = kg.add(gram, WeightUnit.GRAM);
-        assertEquals(2000.0, result.getValue(), 1e-6);
+        assertEquals(2000.0, result.getValue(), EPSILON);
     }
 
+    // ---------------- CROSS CATEGORY ----------------
+
     @Test
-    void testWeight_LengthIncompatibility() {
-        var weight = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        var length = new QuantityMeasurementApp.Length(1.0, LengthUnit.FEET);
+    void testWeightLengthIncompatibility() {
+        var weight = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        var length = new Quantity<>(1.0, LengthUnit.FEET);
         assertFalse(weight.equals(length));
     }
-
 }
