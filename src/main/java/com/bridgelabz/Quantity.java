@@ -77,6 +77,9 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
+
+        unit.validateOperationSupport("addition");
+
         validateArithmeticOperands(other, targetUnit, true);
 
         double baseResult = performBaseArithmetic(other, ArithmeticOperation.ADD);
@@ -94,6 +97,9 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+
+        unit.validateOperationSupport("subtraction");
+
         validateArithmeticOperands(other, targetUnit, true);
 
         double baseResult = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
@@ -107,13 +113,16 @@ public class Quantity<U extends IMeasurable> {
      ========================= */
 
     public double divide(Quantity<U> other) {
+
+        unit.validateOperationSupport("division");
+
         validateArithmeticOperands(other, null, false);
 
         return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
     }
 
     /* =========================
-       CENTRALIZED VALIDATION
+       VALIDATION
      ========================= */
 
     private void validateArithmeticOperands(
@@ -134,10 +143,6 @@ public class Quantity<U extends IMeasurable> {
             throw new IllegalArgumentException("Target unit cannot be null");
     }
 
-    /* =========================
-       CENTRALIZED ARITHMETIC
-     ========================= */
-
     private double performBaseArithmetic(
             Quantity<U> other,
             ArithmeticOperation operation) {
@@ -147,10 +152,6 @@ public class Quantity<U extends IMeasurable> {
 
         return operation.compute(base1, base2);
     }
-
-    /* =========================
-       ENUM DISPATCH
-     ========================= */
 
     private enum ArithmeticOperation {
 
@@ -179,10 +180,6 @@ public class Quantity<U extends IMeasurable> {
 
         public abstract double compute(double a, double b);
     }
-
-    /* =========================
-       ROUNDING
-     ========================= */
 
     private double round(double value) {
         return Math.round(value * 100.0) / 100.0;
