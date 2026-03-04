@@ -69,7 +69,7 @@ public class Quantity<U extends IMeasurable> {
     }
 
     /* =========================
-       ADDITION (UC11)
+       ADDITION
      ========================= */
 
     public Quantity<U> add(Quantity<U> other) {
@@ -77,19 +77,16 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        validateOperation(other, targetUnit);
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double baseResult =
-                unit.convertToBaseUnit(this.value) +
-                        other.unit.convertToBaseUnit(other.value);
+        double baseResult = performBaseArithmetic(other, ArithmeticOperation.ADD);
+        double converted = targetUnit.convertFromBaseUnit(baseResult);
 
-        double finalValue = targetUnit.convertFromBaseUnit(baseResult);
-
-        return new Quantity<>(round(finalValue), targetUnit);
+        return new Quantity<>(round(converted), targetUnit);
     }
 
     /* =========================
-       SUBTRACTION (UC12)
+       SUBTRACTION
      ========================= */
 
     public Quantity<U> subtract(Quantity<U> other) {
@@ -97,52 +94,95 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
-        validateOperation(other, targetUnit);
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double baseResult =
-                unit.convertToBaseUnit(this.value) -
-                        other.unit.convertToBaseUnit(other.value);
+        double baseResult = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+        double converted = targetUnit.convertFromBaseUnit(baseResult);
 
-        double finalValue = targetUnit.convertFromBaseUnit(baseResult);
-
-        return new Quantity<>(round(finalValue), targetUnit);
+        return new Quantity<>(round(converted), targetUnit);
     }
 
     /* =========================
-       DIVISION (UC12)
+       DIVISION
      ========================= */
 
     public double divide(Quantity<U> other) {
-        if (other == null)
-            throw new IllegalArgumentException("Quantity cannot be null");
+        validateArithmeticOperands(other, null, false);
 
-        if (!unit.getClass().equals(other.unit.getClass()))
-            throw new IllegalArgumentException("Cross-category division not allowed");
-
-        double divisorBase = other.unit.convertToBaseUnit(other.value);
-
-        if (Math.abs(divisorBase) < EPSILON)
-            throw new ArithmeticException("Division by zero");
-
-        double base1 = unit.convertToBaseUnit(this.value);
-
-        return base1 / divisorBase;
+        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
     }
 
     /* =========================
-       VALIDATION
+       CENTRALIZED VALIDATION
      ========================= */
 
-    private void validateOperation(Quantity<U> other, U targetUnit) {
+    private void validateArithmeticOperands(
+            Quantity<U> other,
+            U targetUnit,
+            boolean targetUnitRequired) {
+
         if (other == null)
             throw new IllegalArgumentException("Quantity cannot be null");
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
-
         if (!unit.getClass().equals(other.unit.getClass()))
             throw new IllegalArgumentException("Cross-category operation not allowed");
+
+        if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
+            throw new IllegalArgumentException("Invalid numeric value");
+
+        if (targetUnitRequired && targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
     }
+
+    /* =========================
+       CENTRALIZED ARITHMETIC
+     ========================= */
+
+    private double performBaseArithmetic(
+            Quantity<U> other,
+            ArithmeticOperation operation) {
+
+        double base1 = unit.convertToBaseUnit(this.value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        return operation.compute(base1, base2);
+    }
+
+    /* =========================
+       ENUM DISPATCH
+     ========================= */
+
+    private enum ArithmeticOperation {
+
+        ADD {
+            @Override
+            public double compute(double a, double b) {
+                return a + b;
+            }
+        },
+
+        SUBTRACT {
+            @Override
+            public double compute(double a, double b) {
+                return a - b;
+            }
+        },
+
+        DIVIDE {
+            @Override
+            public double compute(double a, double b) {
+                if (Math.abs(b) < EPSILON)
+                    throw new ArithmeticException("Division by zero");
+                return a / b;
+            }
+        };
+
+        public abstract double compute(double a, double b);
+    }
+
+    /* =========================
+       ROUNDING
+     ========================= */
 
     private double round(double value) {
         return Math.round(value * 100.0) / 100.0;
