@@ -1,5 +1,7 @@
 package com.bridgelabz;
 
+import com.bridgelabz.unit.IMeasurable;
+
 import java.util.Objects;
 
 public class Quantity<U extends IMeasurable> {

@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS quantity_measurements (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    operation VARCHAR(50) NOT NULL,
+    result VARCHAR(255),
+    error VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,4 +1,4 @@
-package com.bridgelabz;
+package com.bridgelabz.unit;
 
 @FunctionalInterface
 public interface SupportsArithmetic {

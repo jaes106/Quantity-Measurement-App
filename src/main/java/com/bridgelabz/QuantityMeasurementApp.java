@@ -2,14 +2,14 @@ package com.bridgelabz;
 
 import com.bridgelabz.controller.QuantityMeasurementController;
 import com.bridgelabz.dto.QuantityDTO;
-import com.bridgelabz.repository.QuantityMeasurementCacheRepository;
+import com.bridgelabz.repository.QuantityMeasurementDatabaseRepository;
 import com.bridgelabz.service.QuantityMeasurementServiceImpl;
 
 public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        var repo = QuantityMeasurementCacheRepository.getInstance();
+        var repo = QuantityMeasurementDatabaseRepository.getInstance();
         var service = new QuantityMeasurementServiceImpl(repo);
         var controller = new QuantityMeasurementController(service);
 
