@@ -1,44 +1,89 @@
 package com.bridgelabz.entity;
 
-import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
-public class QuantityMeasurementEntity implements Serializable {
+@Entity
+@Table(name = "quantity_measurements")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class QuantityMeasurementEntity {
 
-    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final long id;
-    private final String operation;
-    private final String result;
-    private final String error;
-    private final LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private OperationType operation;
 
-    public QuantityMeasurementEntity(String operation, String result) {
-        this(0, operation, result, null, LocalDateTime.now());
-    }
+    @Column(length = 255)
+    private String result;
 
-    public QuantityMeasurementEntity(String operation, String result, String error) {
-        this(0, operation, result, error, LocalDateTime.now());
+    @Column(length = 255)
+    private String error;
+
+    @Column(nullable = false)
+    private boolean errorFlag;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    public QuantityMeasurementEntity() {
     }
 
     public QuantityMeasurementEntity(
-            long id,
-            String operation,
+            Long id,
+            OperationType operation,
             String result,
             String error,
+            boolean errorFlag,
             LocalDateTime createdAt) {
         this.id = id;
         this.operation = operation;
         this.result = result;
         this.error = error;
+        this.errorFlag = errorFlag;
         this.createdAt = createdAt;
     }
 
-    public long getId() {
+    public QuantityMeasurementEntity(OperationType operation, String result) {
+        this.operation = operation;
+        this.result = result;
+    }
+
+    public QuantityMeasurementEntity(OperationType operation, String result, String error) {
+        this.operation = operation;
+        this.result = result;
+        this.error = error;
+        this.errorFlag = error != null;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public String getOperation() {
+    public OperationType getOperation() {
         return operation;
     }
 
@@ -48,6 +93,10 @@ public class QuantityMeasurementEntity implements Serializable {
 
     public String getError() {
         return error;
+    }
+
+    public boolean isErrorFlag() {
+        return errorFlag;
     }
 
     public LocalDateTime getCreatedAt() {

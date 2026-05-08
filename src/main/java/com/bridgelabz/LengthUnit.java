@@ -1,14 +1,15 @@
-package com.bridgelabz.unit;
+package com.bridgelabz;
 
-public enum VolumeUnit implements IMeasurable {
+public enum LengthUnit implements IMeasurable {
 
-    LITRE(1.0),
-    MILLILITRE(0.001),
-    GALLON(3.78541);
+    FEET(1.0),
+    INCHES(1.0 / 12.0),
+    YARDS(3.0),
+    CENTIMETERS(1.0 / 30.48);
 
     private final double conversionFactor;
 
-    VolumeUnit(double conversionFactor) {
+    LengthUnit(double conversionFactor) {
         this.conversionFactor = conversionFactor;
     }
 
@@ -29,6 +30,6 @@ public enum VolumeUnit implements IMeasurable {
 
     @Override
     public String getUnitName() {
-        return this.name();
+        return name();
     }
 }

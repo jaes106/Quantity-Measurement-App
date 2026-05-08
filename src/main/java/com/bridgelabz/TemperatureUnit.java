@@ -1,4 +1,4 @@
-package com.bridgelabz.unit;
+package com.bridgelabz;
 
 import java.util.function.Function;
 

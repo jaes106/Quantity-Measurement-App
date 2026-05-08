@@ -1,22 +1,19 @@
 package com.bridgelabz;
 
-import com.bridgelabz.controller.QuantityMeasurementController;
-import com.bridgelabz.dto.QuantityDTO;
-import com.bridgelabz.repository.QuantityMeasurementDatabaseRepository;
-import com.bridgelabz.service.QuantityMeasurementServiceImpl;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
+@OpenAPIDefinition(info = @Info(
+        title = "Quantity Measurement API",
+        version = "1.0",
+        description = "REST APIs for quantity comparison, conversion, arithmetic, and operation history"
+))
 public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
-
-        var repo = QuantityMeasurementDatabaseRepository.getInstance();
-        var service = new QuantityMeasurementServiceImpl(repo);
-        var controller = new QuantityMeasurementController(service);
-
-        QuantityDTO q1 = new QuantityDTO(10, "FEET", "length");
-        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "length");
-
-        controller.performAddition(q1, q2, "FEET");
-        controller.performComparison(q1, q2);
+        SpringApplication.run(QuantityMeasurementApp.class, args);
     }
 }

@@ -27,6 +27,6 @@ public class QuantityMeasurementCacheRepository
 
     @Override
     public List<QuantityMeasurementEntity> findAll() {
-        return new ArrayList<>(store);
+        return store;
     }
 }

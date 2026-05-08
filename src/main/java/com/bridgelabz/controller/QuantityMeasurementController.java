@@ -1,8 +1,23 @@
 package com.bridgelabz.controller;
 
-import com.bridgelabz.dto.QuantityDTO;
+import com.bridgelabz.dto.QuantityInputDTO;
+import com.bridgelabz.dto.QuantityMeasurementDTO;
 import com.bridgelabz.service.IQuantityMeasurementService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/quantity-measurements")
+@Tag(name = "Quantity Measurements", description = "Compare, convert, calculate, and view quantity operation history")
 public class QuantityMeasurementController {
 
     private final IQuantityMeasurementService service;
@@ -11,23 +26,47 @@ public class QuantityMeasurementController {
         this.service = service;
     }
 
-    public void performConversion(QuantityDTO dto, String targetUnit) {
-        System.out.println(service.convert(dto, targetUnit));
+    @PostMapping("/compare")
+    @Operation(summary = "Compare two quantities")
+    public ResponseEntity<QuantityMeasurementDTO> compare(@Valid @RequestBody QuantityInputDTO request) {
+        return ResponseEntity.ok(service.compare(request.getFirstQuantity(), request.getSecondQuantity()));
     }
 
-    public void performAddition(QuantityDTO q1, QuantityDTO q2, String targetUnit) {
-        System.out.println(service.add(q1, q2, targetUnit));
+    @PostMapping("/convert")
+    @Operation(summary = "Convert a quantity to another unit")
+    public ResponseEntity<QuantityMeasurementDTO> convert(@Valid @RequestBody QuantityInputDTO request) {
+        return ResponseEntity.ok(service.convert(request.getQuantity(), request.getTargetUnit()));
     }
 
-    public void performSubtraction(QuantityDTO q1, QuantityDTO q2, String targetUnit) {
-        System.out.println(service.subtract(q1, q2, targetUnit));
+    @PostMapping("/add")
+    @Operation(summary = "Add two quantities")
+    public ResponseEntity<QuantityMeasurementDTO> add(@Valid @RequestBody QuantityInputDTO request) {
+        return ResponseEntity.ok(service.add(
+                request.getFirstQuantity(),
+                request.getSecondQuantity(),
+                request.getTargetUnit()
+        ));
     }
 
-    public void performDivision(QuantityDTO q1, QuantityDTO q2) {
-        System.out.println(service.divide(q1, q2));
+    @PostMapping("/subtract")
+    @Operation(summary = "Subtract two quantities")
+    public ResponseEntity<QuantityMeasurementDTO> subtract(@Valid @RequestBody QuantityInputDTO request) {
+        return ResponseEntity.ok(service.subtract(
+                request.getFirstQuantity(),
+                request.getSecondQuantity(),
+                request.getTargetUnit()
+        ));
     }
 
-    public void performComparison(QuantityDTO q1, QuantityDTO q2) {
-        System.out.println(service.compare(q1, q2));
+    @PostMapping("/divide")
+    @Operation(summary = "Divide two quantities")
+    public ResponseEntity<QuantityMeasurementDTO> divide(@Valid @RequestBody QuantityInputDTO request) {
+        return ResponseEntity.ok(service.divide(request.getFirstQuantity(), request.getSecondQuantity()));
+    }
+
+    @GetMapping("/history")
+    @Operation(summary = "Fetch operation history")
+    public ResponseEntity<List<QuantityMeasurementDTO>> history() {
+        return ResponseEntity.ok(service.history());
     }
 }

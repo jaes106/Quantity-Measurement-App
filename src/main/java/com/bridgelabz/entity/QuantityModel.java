@@ -1,6 +1,6 @@
-package com.bridgelabz.entity;
+package com.bridgelabz.model;
 
-import com.bridgelabz.unit.IMeasurable;
+import com.bridgelabz.IMeasurable;
 
 public class QuantityModel<U extends IMeasurable> {
 

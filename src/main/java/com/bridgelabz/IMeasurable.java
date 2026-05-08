@@ -1,4 +1,4 @@
-package com.bridgelabz.unit;
+package com.bridgelabz;
 
 public interface IMeasurable {
 
