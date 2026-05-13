@@ -42,24 +42,6 @@ public class QuantityMeasurementEntity {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public QuantityMeasurementEntity() {
-    }
-
-    public QuantityMeasurementEntity(
-            Long id,
-            OperationType operation,
-            String result,
-            String error,
-            boolean errorFlag,
-            LocalDateTime createdAt) {
-        this.id = id;
-        this.operation = operation;
-        this.result = result;
-        this.error = error;
-        this.errorFlag = errorFlag;
-        this.createdAt = createdAt;
-    }
-
     public QuantityMeasurementEntity(OperationType operation, String result) {
         this.operation = operation;
         this.result = result;
@@ -79,27 +61,4 @@ public class QuantityMeasurementEntity {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public OperationType getOperation() {
-        return operation;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public boolean isErrorFlag() {
-        return errorFlag;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 }
